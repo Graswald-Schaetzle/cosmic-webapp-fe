@@ -1,3 +1,6 @@
+import {updateUserMenu} from "./api";
+import {config} from "./config";
+
 function initMenu() {
     document.querySelector('#menu-container ').classList.add('show')
 
@@ -10,6 +13,8 @@ function initMenu() {
         console.log('Поточний порядок:');
         console.log('Колонка 1:', list1Items);
         console.log('Колонка 2:', list2Items);
+
+        createUpdatedList(list1Items, list2Items);
 
         listItems.forEach(item => {
             if (item.classList.contains('selected')) {
@@ -24,8 +29,7 @@ function initMenu() {
         group: 'shared',
         animation: 150,
         onSort: handleUpdatingPositions,
-        onAdd: handleUpdatingPositions,
-        onRemove: handleUpdatingPositions,
+        // onAdd: handleUpdatingPositions,
     };
 
     const list1 = new Sortable(document.getElementById('list1'), options);
@@ -33,7 +37,7 @@ function initMenu() {
     list1.option("disabled", true);
 
 
-    handleUpdatingPositions();
+    // handleUpdatingPositions();
 
 
     document.querySelector('.block-1 .add-elem').addEventListener('click', function() {
@@ -58,6 +62,55 @@ function initMenu() {
     })
 }
 
+function createMenu(menuList) {
+    console.log('menuList', menuList)
+    const enabledList = menuList.filter(item => item.enabled).sort((a, b) => a.order - b.order);
+    const disabledList = menuList.filter(item => !item.enabled).sort((a, b) => a.order - b.order);
+
+    console.log('enabledList', enabledList)
+    console.log('disabledList', disabledList)
+    const list1HTML = document.querySelector('#list1');
+    const list2HTML = document.querySelector('#list2');
+    let list1HTMLContent = '';
+    let list2HTMLContent = '';
+    enabledList.forEach(item => list1HTMLContent += ` <div class="item"><img src="${getSVG(item.name)}" alt=""><p>${item.name}</p></div>`)
+    disabledList.forEach(item => list2HTMLContent += ` <div class="item"><img src="${getSVG(item.name)}" alt=""><p>${item.name}</p></div>`)
+    list1HTML.innerHTML = list1HTMLContent;
+    list2HTML.innerHTML = list2HTMLContent;
+
+    initMenu()
+
+    function getSVG(itemName) {
+        const fileName = itemName.toLowerCase().replace(/ /g, '-');
+        return `./icons/menu/white/${fileName}.svg`
+    }
+}
+function createUpdatedList(list1Items, list2Items) {
+    const list1ItemsPrettified = list1Items.map((item, index) => {return { name: item,  order: index, enabled: true}});
+    const list2ItemsPrettified = list2Items.map((item, index) => {return { name: item,  order: index, enabled: false}});
+    const unionList = [...list1ItemsPrettified, ...list2ItemsPrettified];
+    if (unionList !== config.menu.previousList) {
+        if (!config.menu.requestIsSending) {
+            config.menu.requestIsSending = true;
+            config.menu.previousList = unionList;
+            updateUserMenu(unionList)
+        } else {
+            if (config.menu.requestInOrder) {
+                clearInterval(config.menu.requestInOrder);
+            }
+            config.menu.requestInOrder = setInterval(() => {
+                if (!config.menu.requestIsSending) {
+                    clearInterval(config.menu.requestInOrder);
+                    config.menu.requestIsSending = true;
+                    config.menu.previousList = unionList;
+                    updateUserMenu(unionList)
+                }
+            }, 200)
+        }
+    }
+}
+
 export {
-    initMenu
+    initMenu,
+    createMenu
 };
