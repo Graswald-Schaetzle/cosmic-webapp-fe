@@ -1,0 +1,140 @@
+#menu-container {
+  display: none;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 30px;
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 40px;
+
+  &.show { display: flex }
+
+  .block {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #8080804D;
+    background-blend-mode: luminosity;
+    backdrop-filter: blur(20px);
+    padding: 12px;
+    border-radius: 33px;
+    //width: 216px;
+    width: 186px;
+    //width: 64px;
+    user-select: none;
+    transition: 300ms;
+
+    h3 {
+      text-align: center;
+      color: #fff;
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 24px;
+      height: 44px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .block-1 {
+    right: 40px;
+    width: 64px;
+
+    .item {
+      p {
+        transform: scaleX(0);
+        opacity: 0;
+        transition: 300ms;
+        transform-origin: left;
+        text-wrap: nowrap;
+      }
+    }
+  }
+  .block-2 {
+    right: 224px;
+    opacity: 0;
+    pointer-events: none;
+    transition: 300ms;
+    transform: translateY(-50%) scaleX(0) ;
+    transform-origin: right;
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .item {
+    display: flex;
+    gap: 12px;
+    color: #fff;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 24px;
+    opacity: 0.75;
+    //cursor: grab;
+
+    height: 40px;
+    align-items: center;
+    padding: 8px;
+    transition: 300ms;
+    background: transparent;
+    border-radius: 100px;
+    cursor: pointer;
+
+
+    &:hover {
+      background: #4E4E4E66;
+      opacity: 1;
+    }
+    &.selected {
+      background-color: #fff;
+      opacity: 1;
+      color: #2E2E2E;
+
+      img {
+        filter: invert(1);
+      }
+    }
+
+
+    &.add-elem {
+      margin-top: 12px;
+    }
+
+    img.black { display: none}
+  }
+
+  &.wide,
+  &:hover {
+    .block-1 {
+      width: 184px;
+
+      .item p {
+        transform: scaleX(1);
+        opacity: 1;
+      }
+    }
+  }
+
+  &.wide {
+    .block-2 {
+      transform: translateY(-50%) scaleX(1);
+      opacity: 1;
+      pointer-events: all;
+      right: 248px;
+    }
+  }
+}
+
+
+
+
+
+
+
+
