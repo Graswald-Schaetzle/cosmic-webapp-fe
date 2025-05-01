@@ -7,8 +7,12 @@ const menu = {
     requestIsSending: false,
     requestInOrder: null,
 }
-
+const matterport = {
+    sdk: null,
+    mattertags: null,
+}
 export const config = {
     apiParams,
-    menu
+    menu,
+    matterport
 }

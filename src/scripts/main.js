@@ -1,10 +1,12 @@
-import {initMatterport} from "../matterport";
+import {initMatterport} from "./matterport";
 import {initTasks} from "../tasks";
+import {htmlMarkup} from "./html-markup";
 
 
 document.addEventListener('DOMContentLoaded', function () {
-    initMatterport();
-    initTasks();
+    htmlMarkup.loadHTMLMarkup();
+    // initMatterport();
+    // initTasks();
 });
 
 
