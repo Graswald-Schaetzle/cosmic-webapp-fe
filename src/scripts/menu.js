@@ -45,15 +45,26 @@ function initMenu() {
         const draggable = document.querySelector('#menu-container').classList.contains('wide')
         list1.option("disabled", !draggable);
     });
+    document.querySelector('.block-2 .close-list-2').addEventListener('click', function() {
+        document.querySelector('#menu-container').classList.remove('wide');
+        list1.option("disabled", true);
+    });
 
 
     listItems.forEach(clickedItem => {
         clickedItem.addEventListener('click', function() {
             if (clickedItem.classList.contains('add-elem'))  return
 
+            const relevantPopup = findRelevantPopUp(clickedItem);
+            if (relevantPopup) {
+                relevantPopup.classList.toggle('show');
+            }
+
+
             listItems.forEach(item => {
                if (item === clickedItem) {
                    item.classList.toggle('selected');
+
                } else {
                    item.classList.remove('selected');
                }
@@ -73,8 +84,14 @@ function createMenu(menuList) {
     const list2HTML = document.querySelector('#list2');
     let list1HTMLContent = '';
     let list2HTMLContent = '';
-    enabledList.forEach(item => list1HTMLContent += ` <div class="item"><img src="${getSVG(item.name)}" alt=""><p>${item.name}</p></div>`)
-    disabledList.forEach(item => list2HTMLContent += ` <div class="item"><img src="${getSVG(item.name)}" alt=""><p>${item.name}</p></div>`)
+    enabledList.forEach(item => {
+        if (item.name === 'AI Agent') return
+        list1HTMLContent += ` <div class="item"><img src="${getSVG(item.name)}" alt=""><p>${item.name}</p></div>`
+    })
+    disabledList.forEach(item => {
+        if (item.name === 'AI Agent') return
+        list2HTMLContent += ` <div class="item"><img src="${getSVG(item.name)}" alt=""><p>${item.name}</p></div>`
+    })
     list1HTML.innerHTML = list1HTMLContent;
     list2HTML.innerHTML = list2HTMLContent;
 
@@ -108,6 +125,22 @@ function createUpdatedList(list1Items, list2Items) {
             }, 200)
         }
     }
+}
+
+function findRelevantPopUp(menuItem) {
+    const name = menuItem.querySelector('p').textContent.trim().toLowerCase();
+    console.log('name', name)
+
+    let foundedPopUp = null
+    switch(name) {
+        case 'dashboard':
+            foundedPopUp = document.querySelector('#dashboard-popup')
+            break
+        default:
+
+    }
+
+    return foundedPopUp
 }
 
 export {

@@ -14,7 +14,9 @@ async function initClerk() {
 
     if (clerk.user) {
 
-        clerk.mountUserButton(htmlMarkup.clerk.userButton)
+        clerk.mountUserButton(htmlMarkup.clerk.userButton, {
+            afterSignOutUrl:  window.location.pathname,
+        });
         htmlMarkup.clerk.signInModal.classList.add('hidden');
         initMatterport();
         // initMenu();
@@ -25,8 +27,8 @@ async function initClerk() {
             signInOptions: {
                 socialConnections: ['google', 'apple'],
             },
-            // afterSignInUrl: '/',
-            // afterSignUpUrl: '/',
+            afterSignInUrl:  window.location.pathname,
+            afterSignUpUrl: window.location.pathname,
         });
         htmlMarkup.clerk.userButton.classList.add('hidden');
     }
