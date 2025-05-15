@@ -1,6 +1,6 @@
 import {config} from "./config";
 import {createFrameHTML} from "./utils";
-import {htmlMarkup} from "./html-markup";
+import {htmlMarkup} from "./scripts/html-markup";
 import {apiRequests} from "./api";
 
 export function initTasks() {
