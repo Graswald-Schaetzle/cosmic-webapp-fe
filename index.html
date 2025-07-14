@@ -1,116 +1,18 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
-
-
-      <link href="./src/style.css" rel="stylesheet" />
-      <link rel="stylesheet" href="./src/styles/main.scss">
-
+    <title>Matterport Viewer</title>
+    <!-- Add Matterport SDK as a module -->
+    <script type="module">
+      import { connect } from 'https://api.matterport.com/sdk/bootstrap/3.0.0-0-g0517b8d76c/sdk.es6.js?applicationKey=2m09afwdgxp3g0dgdr8zn193a';
+      window.connect = connect;
+    </script>
   </head>
   <body>
-    <div id="clerk-sign-in-modal"></div>
-    <div id="clerk-user-button"></div>
-
-
-    <div id="menu-container">
-        <div class="block block-1">
-            <div class="item ai-agent"><img src="./icons/menu/white/ai-agent.svg" alt=""><p>AI Agent</p></div>
-            <div class="line"></div>
-            <div class="list"  id="list1">
-<!--                <div class="item"><img src="./icons/menu/white/dashboard.svg" alt=""><p>Dashboard</p></div>-->
-<!--                <div class="item"><img src="./icons/menu/white/tasks.svg" alt=""><p>Tasks</p></div>-->
-<!--                <div class="item"><img src="./icons/menu/white/notifications.svg" alt=""><p>Notifications</p></div>-->
-<!--                <div class="item"><img src="./icons/menu/white/calendar.svg" alt=""><p>Calendar</p></div>-->
-<!--                <div class="item"><img src="./icons/menu/white/ai-agent.svg" alt=""><p>AI Agent</p></div>-->
-<!--                <div class="item"><img src="./icons/menu/white/profile.svg" alt=""><p>Profile</p></div>-->
-            </div>
-            <div class="item add-elem"><img src="./icons/menu/plus.svg" alt=""> <p>Add element</p></div>
-        </div>
-
-        <div class="block block-2">
-            <div class="wrapper">
-                <div class="header">
-                    <h3>Other elements</h3>
-                    <img src="./icons/mattertag/cross.svg" alt="" class="close-list-2">
-                </div>
-                <div class="list"  id="list2">
-    <!--                <div class="item"><img src="./icons/menu/white/documents.svg" alt=""><p>Documents</p></div>-->
-    <!--                <div class="item"><img src="./icons/menu/tasks.svg" alt=""><p>Interior Designer</p></div>-->
-    <!--                <div class="item"><img src="./icons/menu/tasks.svg" alt=""><p>Food Delivery</p></div>-->
-    <!--                <div class="item"><img src="./icons/menu/tasks.svg" alt=""><p>Insurance</p></div>-->
-    <!--                <div class="item"><img src="./icons/menu/tasks.svg" alt=""><p>Games</p></div>-->
-                </div>
-
-                <div class="tooltip">
-                    <p class="row row-1"> Tooltip:</p>
-                    <p class="row row-2">Drag & Drop elements with your mouse</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-<!--    <button id="create-task-button" type="button">Create Task</button>-->
-    <iframe
-            src=""
-            frameborder="0"
-            allow="fullscreen *"
-            id="matterport-iframe">
-    </iframe>
-
-<!--    <div class="calendar-icon">-->
-<!--      <img src="./calendar.svg" alt="">-->
-<!--    </div>-->
-
-
-<!--    <div id="calendar-container">-->
-<!--      <div id="calendar-wrapper">-->
-<!--        <div id="calendar"></div>-->
-<!--      </div>-->
-<!--    </div>-->
-
-
-<!--    <div class="tag-control-container">-->
-<!--        <div class="bg"></div>-->
-<!--        <div class="modal">-->
-<!--            <h2>Create Task</h2>-->
-<!--            <input placeholder="Title" class="task-title"/>-->
-<!--            <input placeholder="Description" class="task-description" />-->
-<!--            <input placeholder="Due date" class="task-date"/>-->
-<!--            <input type="text" placeholder="Priority" class="task-priority">-->
-<!--            <button>Create</button>-->
-<!--        </div>-->
-<!--    </div>-->
-
-
-
-    <!--    -->
-    <div id="mattertag-container"></div>
-
-
-    <script type="importmap">
-      {
-        "imports": {
-          "MP_SDK": "https://api.matterport.com/sdk/bootstrap/3.0.0-0-g0517b8d76c/sdk.es6.js?applicationKey=2m09afwdgxp3g0dgdr8zn193a"
-        }
-      }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-
-
-    <script type="module" src="./src/scripts/clerk.js"></script>
-    <script type="module" src="./src/scripts/main.js"></script>
-
-
-
-<!--    <script src='https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.15/index.global.min.js'></script>-->
-
-<!--    <script type="module" src="./src/calendar.js"></script>-->
-
-
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
