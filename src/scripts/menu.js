@@ -10,9 +10,9 @@ function initMenu() {
         const list1Items = Array.from(document.querySelectorAll('#list1 .item')).map(el => el.textContent.trim());
         const list2Items = Array.from(document.querySelectorAll('#list2 .item')).map(el => el.textContent.trim());
 
-        console.log('Поточний порядок:');
-        console.log('Колонка 1:', list1Items);
-        console.log('Колонка 2:', list2Items);
+        console.log('Current order:');
+        console.log('Column 1:', list1Items);
+        console.log('Column 2:', list2Items);
 
         createUpdatedList(list1Items, list2Items);
 

@@ -86,7 +86,7 @@ html, body {
   display: none;
 }
 
-/* Видаляємо сітку */
+/* Remove grid */
 .fc-theme-standard td, .fc-theme-standard th, table.fc-scrollgrid.fc-scrollgrid-liquid {
   border: none !important;
 }

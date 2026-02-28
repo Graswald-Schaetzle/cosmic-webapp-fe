@@ -18,10 +18,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
         },
-        // eventDrop: function(info) { // Оновлення дати після перетягування
+        // eventDrop: function(info) { // Update date after dragging
         //     alert(`Event "${info.event.title}" was moved to the ${info.event.start.toISOString().split('T')[0]}`);
         // },
-        eventClick: function(info) { // Видалення події
+        eventClick: function(info) { // Remove event
             if (confirm(`Remove Event "${info.event.title}"?`)) {
                 info.event.remove();
             }
