@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useUser } from '@clerk/clerk-react';
+import { User } from '@supabase/supabase-js';
 import { useDispatch } from 'react-redux';
+import { supabase } from '../lib/supabase';
 import { authorizeUser } from '../app/api';
 import { useGetAllLocationsQuery } from '../api/locationApi/locationApi';
 import {
@@ -16,7 +17,7 @@ interface CurrentUser {
   created_at: string;
   username: string;
   email: string;
-  clerk_id: string;
+  supabase_id: string;
   first_name: string;
   last_name: string;
   role: string;
@@ -45,7 +46,6 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const { user, isSignedIn, isLoaded } = useUser();
   const dispatch = useDispatch();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -61,50 +61,63 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     skip: !isAuthenticated,
   });
 
-  useEffect(() => {
-    const handleAuthentication = async () => {
-      if (!isLoaded) return;
+  const handleAuthUser = async (supabaseUser: User) => {
+    try {
+      setIsLoading(true);
+      setError(null);
 
-      if (isSignedIn && user) {
-        try {
-          setIsLoading(true);
-          setError(null);
+      const userData = await authorizeUser(supabaseUser);
 
-          // Call our custom signup endpoint with Clerk user data
-          const userData = await authorizeUser(user);
-
-          // Check if token was set
-          const token = localStorage.getItem('access_token');
-          if (!token) {
-            throw new Error('No access token found after authentication');
-          }
-
-          // Set current user data from login response
-          setCurrentUserState(userData);
-          dispatch(setCurrentUser(userData));
-
-          // Set authentication as complete
-          setIsAuthenticated(true);
-          setIsLoading(false);
-        } catch (err) {
-          console.error('Authentication failed:', err);
-          setError(err instanceof Error ? err.message : 'Authentication failed');
-          setIsAuthenticated(false);
-          setIsLoading(false);
-        }
-      } else {
-        // User is not signed in
-        setIsAuthenticated(false);
-        setIsLoading(false);
-        setError(null);
-        setCurrentUserState(null);
-        dispatch(clearCurrentUser());
-        dispatch(clearLocations());
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        throw new Error('No access token found after authentication');
       }
-    };
 
-    handleAuthentication();
-  }, [isSignedIn, user, isLoaded, dispatch]);
+      setCurrentUserState(userData);
+      dispatch(setCurrentUser(userData));
+      setIsAuthenticated(true);
+    } catch (err) {
+      console.error('Authentication failed:', err);
+      setError(err instanceof Error ? err.message : 'Authentication failed');
+      setIsAuthenticated(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSignOut = () => {
+    localStorage.removeItem('access_token');
+    setIsAuthenticated(false);
+    setIsLoading(false);
+    setError(null);
+    setCurrentUserState(null);
+    dispatch(clearCurrentUser());
+    dispatch(clearLocations());
+  };
+
+  useEffect(() => {
+    // Load current session on mount
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        handleAuthUser(session.user);
+      } else {
+        setIsLoading(false);
+      }
+    });
+
+    // Listen for auth state changes (login, logout, token refresh)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        handleAuthUser(session.user);
+      } else {
+        handleSignOut();
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Update locations state when data is fetched
   useEffect(() => {
@@ -113,7 +126,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     } else if (locationsError) {
       dispatch(setLocationsError('Failed to load locations'));
     } else if (locationsData) {
-      // The API now returns a simple array of LocationItem objects
       dispatch(setLocations(locationsData));
     }
   }, [locationsData, locationsLoading, locationsError, dispatch]);

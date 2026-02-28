@@ -1,5 +1,4 @@
-// @ts-ignore
-import { User } from '@clerk/clerk-react';
+import { User } from '@supabase/supabase-js';
 import { BaseQueryFn, createApi } from '@reduxjs/toolkit/query/react';
 import { AxiosRequestConfig } from 'axios';
 import axiosInstance from './axios';
@@ -10,7 +9,7 @@ interface AuthResponse {
     created_at: string;
     username: string;
     email: string;
-    clerk_id: string;
+    supabase_id: string;
     first_name: string;
     last_name: string;
     role: string;
@@ -65,14 +64,17 @@ export const api = createApi({
   tagTypes: ['Tasks', 'Documents', 'Notifications', 'UserMenu', 'Lists', 'Locations', 'Users'],
 });
 
-export async function authorizeUser(clerkUser: User): Promise<AuthResponse['user']> {
+export async function authorizeUser(supabaseUser: User): Promise<AuthResponse['user']> {
+  const metadata = supabaseUser.user_metadata ?? {};
+  const fullName: string = metadata.full_name ?? metadata.name ?? '';
+
   const user = {
-    first_name: clerkUser.firstName || '',
-    last_name: clerkUser.lastName || '',
-    email: clerkUser.emailAddresses[0].emailAddress || '',
-    clerk_id: clerkUser.id || '',
+    first_name: metadata.first_name ?? metadata.given_name ?? fullName.split(' ')[0] ?? '',
+    last_name: metadata.last_name ?? metadata.family_name ?? fullName.split(' ').slice(1).join(' ') ?? '',
+    email: supabaseUser.email ?? '',
+    supabase_id: supabaseUser.id,
     role: 'user',
-    username: clerkUser.fullName.replace(/\s/g, '') || '',
+    username: fullName.replace(/\s/g, '') || supabaseUser.email?.split('@')[0] || '',
   };
 
   try {

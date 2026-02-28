@@ -1,4 +1,3 @@
-import { SignedIn, SignedOut, SignIn } from '@clerk/clerk-react';
 import { Routes, Route } from 'react-router-dom';
 import { MatterportProvider } from './contexts/MatterportContext';
 import { TaskProvider } from './contexts/TaskContext';
@@ -21,6 +20,30 @@ import { ObjectManagerWindow } from './features/objectManager/ObjectManagerWindo
 import { CalendarWindow } from './features/calendar/CalendarWindow';
 
 import { Box, CircularProgress, Typography } from '@mui/material';
+import { Auth } from '@supabase/auth-ui-react';
+import { ThemeSupa } from '@supabase/auth-ui-shared';
+import { supabase } from './lib/supabase';
+
+const LoginPage = () => (
+  <Box
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '100vh',
+      backgroundColor: '#1a1a2e',
+    }}
+  >
+    <Box sx={{ width: 400 }}>
+      <Auth
+        supabaseClient={supabase}
+        appearance={{ theme: ThemeSupa }}
+        providers={['google', 'github']}
+        magicLink={true}
+      />
+    </Box>
+  </Box>
+);
 
 // Component to handle authenticated content
 const AuthenticatedContent = () => {
@@ -64,18 +87,7 @@ const AuthenticatedContent = () => {
   }
 
   if (!isAuthenticated) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100vh',
-        }}
-      >
-        <Typography sx={{ color: '#fff' }}>Please sign in to continue</Typography>
-      </Box>
-    );
+    return <LoginPage />;
   }
 
   return (
@@ -124,14 +136,7 @@ export default function App() {
         path="/"
         element={
           <AuthProvider>
-            <SignedIn>
-              <AuthenticatedContent />
-            </SignedIn>
-            <SignedOut>
-              <div className="min-h-screen flex items-center justify-center bg-gray-100">
-                <SignIn />
-              </div>
-            </SignedOut>
+            <AuthenticatedContent />
           </AuthProvider>
         }
       />
