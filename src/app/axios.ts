@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://test1.aestar.com.ua/cosmic';
+const API_URL = import.meta.env.VITE_API_BASE_URL as string;
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
@@ -36,9 +36,8 @@ axiosInstance.interceptors.response.use(
   error => {
     // Handle common errors here
     if (error.response?.status === 401) {
-      // Handle unauthorized
       localStorage.removeItem('access_token');
-      // Redirect to login or refresh token
+      window.location.href = '/';
     }
 
     return Promise.reject(error);

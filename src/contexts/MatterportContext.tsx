@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import {
   createMatterTag,
   editMatterTag,
@@ -27,10 +27,16 @@ export function MatterportProvider({ children }: MatterportProviderProps) {
   const [pose, setPose] = useState<any | null>(null);
   const [intersection, setIntersection] = useState<any | null>(null);
   const [mattertags, setMattertags] = useState<MatterTag[]>([]);
+  const mattertagsRef = useRef<MatterTag[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [showCreateTaskButton, setShowCreateTaskButton] = useState(false);
   const [selectedTag, setSelectedTag] = useState<MatterTag | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Keep ref in sync so subscription callbacks always read the latest tags
+  useEffect(() => {
+    mattertagsRef.current = mattertags;
+  }, [mattertags]);
 
   useEffect(() => {
     if (!sdk) return;
@@ -63,7 +69,7 @@ export function MatterportProvider({ children }: MatterportProviderProps) {
           },
           onChanged(newState: any) {
             if (newState.selected) {
-              const tag = mattertags.find(t => t.sid === newState.selected);
+              const tag = mattertagsRef.current.find(t => t.sid === newState.selected);
               if (tag) {
                 setSelectedTag(tag);
               }
@@ -90,7 +96,7 @@ export function MatterportProvider({ children }: MatterportProviderProps) {
 
         // Subscribe to tag clicks
         sdk.Tag.click.subscribe((tagId: string) => {
-          const tag = mattertags.find(t => t.sid === tagId);
+          const tag = mattertagsRef.current.find(t => t.sid === tagId);
           if (tag) {
             setSelectedTag(tag);
           }
@@ -106,7 +112,7 @@ export function MatterportProvider({ children }: MatterportProviderProps) {
     };
 
     initMatterport();
-  }, [sdk, mattertags]);
+  }, [sdk]);
 
   const createTag = async (data: TagData) => {
     if (!sdk) throw new Error('Matterport SDK not initialized');

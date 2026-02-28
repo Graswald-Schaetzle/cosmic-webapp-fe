@@ -10,20 +10,7 @@ import {
   setLocationsError,
   clearLocations,
 } from '../store/locationsSlice';
-import { setCurrentUser, clearCurrentUser } from '../store/userSlice';
-
-interface CurrentUser {
-  user_id: number;
-  created_at: string;
-  username: string;
-  email: string;
-  supabase_id: string;
-  first_name: string;
-  last_name: string;
-  role: string;
-  access_token: string;
-  refresh_token: string;
-}
+import { setCurrentUser, clearCurrentUser, CurrentUser } from '../store/userSlice';
 
 interface AuthContextType {
   isAuthenticated: boolean;
